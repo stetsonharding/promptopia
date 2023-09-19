@@ -9,16 +9,17 @@ import { get, set } from "mongoose";
 const Nav = () => {
   const isUserLoggedIn = true;
   const [providers, setProviders] = useState(null);
+  const [toggleDropdown, setToggleDropdown] = useState(false)
 
-//Allows use to use Google and next auth to sign in
+  //Allows use to use Google and next auth to sign in
   useEffect(() => {
-    const setProviders = async () => {
+    const setProvidersFunc = async () => {
       const response = await getProviders();
-      setProviders(response)
-    }
+      setProviders(response);
+    };
 
-    setProviders();
-  }, [])
+    setProvidersFunc();
+  }, []);
 
   return (
     <nav className="flex-between w-full mb-16 pt-3">
@@ -44,15 +45,73 @@ const Nav = () => {
               Sign Out
             </button>
             <Link href="/profile">
-              <Image src="/assets/images/logo.svg"
+              <Image
+                src="/assets/images/logo.svg"
+                alt="User Profile"
+                width={37}
+                height={37}
+                className="rounded-full"
+              />
+            </Link>
+          </div>
+        ) : (
+          <>
+            {providers &&
+              Object.values(providers).map((provider) => {
+                <button
+                  type="button"
+                  key={provider.name}
+                  onClick={() => signIn(provider.id)}
+                  className="black_btn"
+                >
+                  Sign In
+                </button>;
+              })}
+          </>
+        )}
+      </div>
+
+      {/* Mobile Navigation */}
+      <div className="sm:hidden flex relative">
+        {isUserLoggedIn ? (
+          <div className="flex">
+            <Image
+              src="/assets/images/logo.svg"
               alt="User Profile"
               width={37}
               height={37}
               className="rounded-full"
-               />
+              onClick={() => setToggleDropdown(prevState => !prevState)}
+            />
+        {toggleDropdown && (
+          <div className="dropdown">
+            <Link href="/profile" className="dropdown_link" onclick={() => setToggleDropdown(false)}>
+            My Profile
             </Link>
+            <Link href="/create-prompt" className="dropdown_link" onclick={() => setToggleDropdown(false)}>
+            Create Prompt
+            </Link>
+            <button className="mt-5 w-full black_btn"
+            type='button'
+            onClick={() => setToggleDropdown(false)}>Sign out</button>
           </div>
-        ) : null /*Sign In button here*/}
+        ) }
+          </div>
+        ) : (
+          <>
+            {providers &&
+              Object.values(providers).map((provider) => {
+                <button
+                  type="button"
+                  key={provider.name}
+                  onClick={() => signIn(provider.id)}
+                  className="black_btn"
+                >
+                  Sign In
+                </button>;
+              })}
+          </>
+        )}
       </div>
     </nav>
   );
