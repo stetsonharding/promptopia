@@ -4,22 +4,24 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react";
-import { get, set } from "mongoose";
+// import { get, set } from "mongoose";
 
 const Nav = () => {
-  const isUserLoggedIn = true;
-  const [providers, setProviders] = useState(null);
-  const [toggleDropdown, setToggleDropdown] = useState(false)
+  const { data: session } = useSession();
 
-  //Allows use to use Google and next auth to sign in
+  const [providers, setProviders] = useState(null);
+  const [toggleDropdown, setToggleDropdown] = useState(false);
+
+  //Allows us to use Google and next auth to sign in
   useEffect(() => {
-    const setProvidersFunc = async () => {
+    const setUpProviders = async () => {
       const response = await getProviders();
       setProviders(response);
     };
-
-    setProvidersFunc();
+    setUpProviders();
   }, []);
+
+console.log(session?.user)
 
   return (
     <nav className="flex-between w-full mb-16 pt-3">
@@ -36,7 +38,7 @@ const Nav = () => {
 
       {/* desktop Navigation */}
       <div className="sm:flex hidden">
-        {isUserLoggedIn ? (
+        {session?.user ? (
           <div className="flex gap-3 md:gap-5">
             <Link href="/create-prompt" className="black_btn">
               Create Post
@@ -46,7 +48,7 @@ const Nav = () => {
             </button>
             <Link href="/profile">
               <Image
-                src="/assets/images/logo.svg"
+                src={session?.user.image}
                 alt="User Profile"
                 width={37}
                 height={37}
@@ -58,14 +60,16 @@ const Nav = () => {
           <>
             {providers &&
               Object.values(providers).map((provider) => {
-                <button
-                  type="button"
-                  key={provider.name}
-                  onClick={() => signIn(provider.id)}
-                  className="black_btn"
-                >
-                  Sign In
-                </button>;
+                return (
+                  <button
+                    type="button"
+                    key={provider.name}
+                    onClick={() => signIn(provider.id)}
+                    className="black_btn"
+                  >
+                    Sign In
+                  </button>
+                );
               })}
           </>
         )}
@@ -73,42 +77,56 @@ const Nav = () => {
 
       {/* Mobile Navigation */}
       <div className="sm:hidden flex relative">
-        {isUserLoggedIn ? (
+        {session?.user ? (
           <div className="flex">
             <Image
-              src="/assets/images/logo.svg"
+              src={session?.user.image}
               alt="User Profile"
               width={37}
               height={37}
               className="rounded-full"
-              onClick={() => setToggleDropdown(prevState => !prevState)}
+              onClick={() => setToggleDropdown((prevState) => !prevState)}
             />
-        {toggleDropdown && (
-          <div className="dropdown">
-            <Link href="/profile" className="dropdown_link" onclick={() => setToggleDropdown(false)}>
-            My Profile
-            </Link>
-            <Link href="/create-prompt" className="dropdown_link" onclick={() => setToggleDropdown(false)}>
-            Create Prompt
-            </Link>
-            <button className="mt-5 w-full black_btn"
-            type='button'
-            onClick={() => setToggleDropdown(false)}>Sign out</button>
-          </div>
-        ) }
+            {toggleDropdown && (
+              <div className="dropdown">
+                <Link
+                  href="/profile"
+                  className="dropdown_link"
+                  onclick={() => setToggleDropdown(false)}
+                >
+                  My Profile
+                </Link>
+                <Link
+                  href="/create-prompt"
+                  className="dropdown_link"
+                  onclick={() => setToggleDropdown(false)}
+                >
+                  Create Prompt
+                </Link>
+                <button
+                  className="mt-5 w-full black_btn"
+                  type="button"
+                  onClick={() => setToggleDropdown(false)}
+                >
+                  Sign out
+                </button>
+              </div>
+            )}
           </div>
         ) : (
           <>
             {providers &&
               Object.values(providers).map((provider) => {
-                <button
-                  type="button"
-                  key={provider.name}
-                  onClick={() => signIn(provider.id)}
-                  className="black_btn"
-                >
-                  Sign In
-                </button>;
+                return (
+                  <button
+                    type="button"
+                    key={provider.name}
+                    onClick={() => signIn(provider.id)}
+                    className="black_btn"
+                  >
+                    Sign In
+                  </button>
+                );
               })}
           </>
         )}
