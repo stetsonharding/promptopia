@@ -7,13 +7,13 @@ import PromptCard from "./PromptCard";
 const PromptCardList = ({ data, handleClickTag }) => {
   return (
     <div className="mt-16 prompt-layout">
-      {data.map((post, index) => {
+      {data.map((post, index) => (
         <PromptCard  
         key={post._id}
         post={post}
         handleClickTag={handleClickTag}
         />
-    })}
+    ))}
     </div>
   );
 };
@@ -21,9 +21,9 @@ const PromptCardList = ({ data, handleClickTag }) => {
 const Feed = () => {
   const [searchText, setSearchText] = useState("");
   const [posts, setPosts] = useState([]);
-
+  
   const handleSearchChange = async (e) => {};
-
+  
   useEffect(() => {
     //Make get request to api
     const fetchPosts = async () => {
@@ -36,11 +36,12 @@ const Feed = () => {
         
       }
     };
-
+    
+    
     fetchPosts();
   }, []);
-
   console.log(posts)
+
 
   return (
     <section className="feed">
