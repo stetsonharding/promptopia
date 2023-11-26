@@ -1,4 +1,4 @@
-import { Schema, model, models } from "mongoose";
+import  { Schema, model, models } from "mongoose";
 
 const PromptSchema = new Schema({
   creator: {
@@ -17,6 +17,6 @@ const PromptSchema = new Schema({
   },
 });
 
-const Prompt = models.prompt || model("Prompt", PromptSchema);
+const Prompt = models.Prompt || model("Prompt", PromptSchema);
 
 export default Prompt;
