@@ -25,7 +25,7 @@ const Feed = () => {
   const handleSearchChange = async (e) => {};
   
   useEffect(() => {
-    //Make get request to api
+    //Make get request to api to fetch posts
     const fetchPosts = async () => {
       try {
         const response = await fetch("/api/prompt");
@@ -40,7 +40,7 @@ const Feed = () => {
     
     fetchPosts();
   }, []);
-  console.log(posts)
+ 
 
 
   return (

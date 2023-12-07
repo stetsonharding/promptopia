@@ -10,6 +10,9 @@ const PromptCard = ({key, post, handleClickTag, handleEdit, handleDelete}) => {
 
 
 const [isPostCopied, setIsPostCopied] = useState("false")
+const {data:session} = useSession();
+const pathName = usePathname();
+const router = useRouter();
 
 
 const handleCopy = () => {
@@ -19,6 +22,8 @@ const handleCopy = () => {
     isPostCopied("")
   }, 3000);
 }
+
+
 
 
   return (
@@ -47,6 +52,12 @@ const handleCopy = () => {
   </div>
 
   <p className="my-4 font-satoshi text-sm text-gray-700">{post.prompt}</p>
+  {session?.user.id === post.creator._id && pathName === '/profile' && (
+    <div className="flex-center mt-5 pt-3 gap-3">
+      <p className="green_gradient text-sm font-inter cursor-pointer" onClick={handleEdit}>Edit</p>
+      <p className="orange_gradient text-sm font-inter cursor-pointer" onClick={handleDelete}>Delete</p>
+    </div>
+  )}
   <p className="font-inter text-sm blue_gradient cursor-pointer" onClick={() => handleClickTag && handleClickTag(post.tag)} > {post.tag}</p>
   </div>
   )
