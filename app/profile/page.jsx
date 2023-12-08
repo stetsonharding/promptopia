@@ -11,6 +11,8 @@ const MyProfile = () => {
 
   const [posts, setPosts] = useState([]);
 
+  let router = useRouter();
+
   useEffect(() => {
     //Make get request to api to fetch posts
     const fetchPosts = async () => {
@@ -26,9 +28,33 @@ const MyProfile = () => {
     if (session?.user.id) fetchPosts();
   }, []);
 
-  const handleEdit = () => {};
+  const handleEdit = (id) => {
+    router.push(`/update-prompt?id=${id}`);
+  };
 
-  const handleDelete = async () => {};
+  const handleDelete = async (id) => {
+    const hasConfirmed = confirm(
+      "Are you sure you want to remove this prompt?"
+    );
+
+    if (hasConfirmed) {
+      const options = {
+        method: "DELETE",
+      };
+
+      try {
+        const response = await fetch(`/api/prompt/${id.toString()}`, options);
+
+        if (response.ok) {
+          const filteredPosts = posts.filter((post) => post._id !== id);
+
+          setPosts(filteredPosts);
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+  };
 
   return (
     <Profile
