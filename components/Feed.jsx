@@ -21,17 +21,30 @@ const PromptCardList = ({ data, handleClickTag, searchedResults }) => {
 };
 
 const Feed = () => {
-  const [searchText, setSearchText] = useState("");
   const [posts, setPosts] = useState([]);
+
+  //Search states
+  const [searchText, setSearchText] = useState('');
   const [searchedResults, setSearchedResults] = useState([]);
+  const [searchTimeout, setSearchTimeout] = useState(null)
 
-  const handleSearchChange = async (e) => {
+
+
+  const handleSearchChange = (e) => {
+    clearTimeout(searchTimeout);
     setSearchText(e.target.value);
-    let searchedPrompts = filteredPrompts(searchText);
 
-    setSearchedResults(searchedPrompts);
+     // debounce method
+  setSearchTimeout(
+      setTimeout(() => {
+        const searchResult = filteredPrompts(e.target.value);
+        setSearchedResults(searchResult);
+      }, 500)
+    );
   };
+  
 
+ 
   const filteredPrompts = (searchText) => {
     let regex = new RegExp(searchText, "i");
 
